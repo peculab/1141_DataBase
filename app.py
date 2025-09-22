@@ -1,63 +1,31 @@
-from flask import Flask, render_template, request, redirect, url_for
-import mysql.connector
+from flask import Flask, redirect, url_for, render_template
 
+# Import your blueprints
+from create import create_bp
+from read import read_bp
+from update import update_bp
+from delete import delete_bp
+
+# Initialize the Flask application
 app = Flask(__name__)
 
-# Database connection details
-DB_HOST = 'localhost'
-DB_USER = 'root'
-DB_PASSWORD = ')P:?9ol.'
-DB_NAME = '1141-database' # Your database name
+# Set a secret key for session management.
+# This is required for using features like flash messages.
+# NOTE: For a production environment, this should be a complex, random string
+# stored securely (e.g., in an environment variable).
+app.secret_key = 'your_super_secret_and_unique_key_here'
 
+# Register the blueprints with the application
+app.register_blueprint(create_bp)
+app.register_blueprint(read_bp)
+app.register_blueprint(update_bp)
+app.register_blueprint(delete_bp)
+
+# A simple index route to show the user data and forms
 @app.route('/')
-def home():
-    """
-    Renders the HTML form to the user.
-    """
-    return render_template('index.html')
-
-@app.route('/add_user', methods=['POST'])
-def add_user():
-    """
-    Handles the form submission and inserts data into the users table.
-    """
-    if request.method == 'POST':
-        # Get data from the form
-        username = request.form['username']
-        email = request.form['email']
-        
-        try:
-            # Connect to MySQL database
-            connection = mysql.connector.connect(
-                host=DB_HOST,
-                user=DB_USER,
-                password=DB_PASSWORD,
-                database=DB_NAME
-            )
-            cursor = connection.cursor()
-
-            # SQL query to insert data into the 'users' table
-            # 'created_at' is handled automatically by the database's DEFAULT CURRENT_TIMESTAMP
-            sql = "INSERT INTO users (username, email) VALUES (%s, %s)"
-            val = (username, email)
-            
-            # Execute the query
-            cursor.execute(sql, val)
-            
-            # Commit the changes to the database
-            connection.commit()
-            
-            return redirect(url_for('home')) # Redirect back to the homepage
-
-        except mysql.connector.Error as err:
-            return f"Error: {err}"
-
-        finally:
-            # Close the connection
-            if 'connection' in locals() and connection.is_connected():
-                cursor.close()
-                connection.close()
-                print("MySQL connection is closed")
+def index():
+    # Redirect to the main 'read' route
+    return redirect(url_for('read_bp.index'))
 
 if __name__ == '__main__':
     app.run(debug=True)

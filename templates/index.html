@@ -2,18 +2,75 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add New User</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" xintegrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+    <title>Posts Management</title>
 </head>
 <body>
-    <h1>Add New User</h1>
-    <form action="/add_user" method="post">
-        <label for="username">Username:</label><br>
-        <input type="text" id="username" name="username" required><br><br>
-        
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email" required><br><br>
-        
-        <button type="submit">Submit</button>
-    </form>
+    <div class="container">
+      <h1>Posts</h1>
+
+<!-- Form to add a new post -->
+<form action="{{ url_for('create_bp.add_post') }}" method="POST">  
+    <div class="form-group">
+        <input type="text" class="form-control" name="username" placeholder="Enter a new username" required>
+        <input type="text" class="form-control" name="email" placeholder="Enter a new email" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Post</button>
+</form>
+
+<h2>Existing Posts</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Date</th>
+            <th>Update</th>
+            <th>Select (for Delete)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <form action="{{ url_for('delete_bp.delete_posts') }}" method="POST">
+        {% for post in posts %}
+        <tr>
+            <td>
+                <input type="hidden" name="id" value="{{ post.id }}">
+                {{ post.id }}
+            </td>
+            <td>
+                <input type="text" name="username" class="form-control" value="{{ post.username }}" required>
+            </td>
+            <td>
+                <input type="text" name="email" class="form-control" value="{{ post.email }}" required>
+            </td>
+            <td>{{ post.created_at }}</td>
+            <td>
+                <button type="submit" class="btn btn-success" formaction="{{ url_for('update_bp.update_post', post_id=post.id) }}">Update</button>
+            </td>
+            <td>
+                <input type="checkbox" name="post_ids" value="{{ post.id }}">
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<button type="submit" class="btn btn-danger">Delete Selected</button>
+</form>
+
+    <!-- Bootstrap and JavaScript libraries -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" xintegrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" xintegrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" xintegrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
 </body>
 </html>
